@@ -1,0 +1,25 @@
+\section{Concluding Remarks}
+\label{Chapter concluding remarks}
+
+We propose a new approach to solving the medium-term reservoir management problem. The aim is to approximate the value function as it depends on current price levels and current reservoir levels. \textcolor{red}{When medium-term hydropower planning is used to support the decision making for short-term planning, only the value function is passed to the short term planning problem, not necessarily an implementable policy.} Thus, we relax policy implementability, taking care not to relax information constraints; our method relies on scenarios for the future development of prices and inflow rather than on their actual realization. The new approach, called STRO, is compared to SDDP and RI.
+
+Although STRO can be applied to broader classes of problems compared to those solved by SDDP, we designed the experiments to suit SDDP well. We leave for future work to explore the performance on non-convex problems. 
+
+Sources of bias potentially impacting the comparisons of the implemented models include both discretization and sampling error subjected to the different methods. Efforts were made to mitigate this by performing multiple trial runs, averaging the results, and performing experiments that, for instance, aimed to bypass the discretization error of SDDP. We have also used seeding to ensure that the exact sampling error is imposed on the rolling horizon methods. 
+
+%The fact that the SDDP algorithm was not able to fully converge and produced a quite wide confidence interval for the true optimum is another concern that could mean that the results achieved with the rolling horizon methods were further from, or closer to, the optimum than indicated by these experiments. The fact that multiple trial runs of the algorithm were run, and that the results are in line with previous experiments from the literature, somewhat mitigates this concern. 
+
+Another factor to consider is that the methods discussed and compared were only tested on a single hydropower system, using only one type of inflow and price model. Specific properties of the case system can make the method more suitable, which can mean that similar results will not be achievable for other systems. %It can also be the case that the price and inflow models were particularly suited for the suggested rolling horizon methods and that more advanced models for the exogenous variables would lead to worse performance for the algorithms. 
+These concerns were not explored in the interest of scope, but they should be further examined in the future. 
+
+With these points made, we emphasize that the RI algorithm has been shown to produce promising results when applied to the reservoir management problem by other authors with different stochastic models for the exogenous processes. This strengthens our confidence in the results.
+
+%With the introduction of a new approach there is naturally many things that could be further explored or improved upon in the future. For the previously discussed reasons, further experiments should be conducted using other hydropower systems and models for the exogenous variables to increase confidence in the results and strengthen their validity. 
+
+%Furthermore, to address the concern discussed about the implemented SDDP algorithm's wide margin between its statistical upper- and lower bound, efforts should be made to tighten these bounds to increase the confidence in the results seen. 
+
+The idea of using a sampling-based heuristic for rolling horizon methods can also be explored further. The STRO method only considers building two-stage stochastic convex programs, but in principle, multi-stage non-convex stochastic programs could be built and solved instead.
+
+%Although this paper only applies the introduced algorithm to the reservoir management problem, it can, in theory, be applied to other domains. The gas planning problem is one where rolling horizon methods have been commonly used before, and it could be interesting to see how the STRO algorithm would perform for this, or other, problems. 
+
+

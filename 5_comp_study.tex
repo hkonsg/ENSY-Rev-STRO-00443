@@ -1,0 +1,94 @@
+\section{Computational Study}
+\label{section:comp_study}
+
+To see how the STRO method with different number of level 2 scenarios per decision performs, the results are benchmarked to the SDDP method, as well as the most well-known rolling horizon method RI. To avoid disclosing any non-public information about the Matre Haugsdal hydropower system, the results of the models are represented as percentages relative to the baseline given by SDDP. 
+
+
+For these studies, revenue has been used as the primary metric for performance comparisons between different algorithms. Seeded level 1 scenarios were used for the rolling horizon methods, to make the revenues as comparable as possible. This means that all rolling horizon methods receive the same realizations of inflow and price. This ensures that the objective values of the rolling horizon methods are comparable, as they solve the exact same scenarios. However, this was not achievable for SDDP due to its discretization. We address this potential source of bias by using a relatively large number of samples for both methods over 10 runs. \textcolor{red}{The planning horizon for each method is 2 years with weekly stages resulting in 104 stages in total.} 
+
+The results presented are average values from all these runs, along with relative standard deviations of the objective values achieved over different trials using the different methods. This approach should give a reasonable estimate of the difference in performance. 
+
+Note that since SDDP yields upper bounds while RI and STRO yield estimated lower bounds, there will always be some discrepancy between their results. 
+
+
+The discretizations are done on a sample base of 200k samples of each exogenous variable, which were discretized to a Markov chain with 125 discrete states per stage. \textcolor{red}{Each of these stages contains a combination of price and inflow. No further scenario reductions were applied for the SDDP method.}  
+
+
+
+The results from the trial runs are presented in Table \ref{tab:base_values}. It presents the expected revenue for the different methods, and the standard deviation over the different runs for each method. Every run of the Rolling Horizon methods was made using 1000 level 1 scenarios, and reported revenue is the average over these runs. 
+ 
+
+\begin{table}[h]
+    \caption[SDDP, suggested method and RI values]{Average objective values of the compared methods.}
+    \label{tab:base_values}
+\setlength\tabcolsep{0pt}
+\centering
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} *{1}{l} *{3}{c} *{1}{r}  }
+        \toprule
+        \multirowcell{2}{Solution Method}  &  
+        \multicolumn{2}{c}{Revenue}  \\%& 
+        %\multicolumn{2}{c}{Average Price}\\ 
+        \cmidrule{2-3}  \cmidrule{4-5}
+        & Relative Value & Standard Deviation \\%& Value [\EUR{}] & SD\\ 
+        \midrule
+
+SDDP   & 100.000\% & 0.487\% \\%&         &         \\
+RI     & 97.546\%  & 0.489\% \\%& 39.5824 & 0.414\% \\
+\cmidrule{1-5}
+STRO(1) & 97.249\%  & 0.484\% \\%& 39.4505 & 0.413\% \\
+STRO(2) & 98.115\%  & 0.487\% \\%& 39.4019 & 0.403\% \\
+STRO(3) & 98.411\%  & 0.489\% \\%& 39.3664 & 0.397\% \\
+STRO(4) & 98.548\%  & 0.486\% \\%& 39.3411 & 0.390\% \\
+STRO(5) & 98.611\%  & 0.485\% \\%& 39.3200 & 0.388\% \\
+STRO(6) & 98.654\%  & 0.482\% \\%& 39.3037 & 0.395\% \\
+STRO(7) & 98.674\%  & 0.483\% \\%& 39.2970 & 0.384\% \\
+        \bottomrule
+
+    \end{tabular*}
+
+\end{table}   
+
+From these results there are multiple takeaways. First, it is apparent that increasing the number of samples per decision in the heuristic leads to a substantial improvement in the results achieved. When comparing the results of STRO for $N=1$ to $N=7$ it can be seen that the gap to the SDDP algorithm is approximately halved. Furthermore, it can be seen that the improvement in the results is diminishing, and the most significant improvement can be seen when increasing $N$ from 1 to 2. However, when comparing the results for $N=6$ to $N=7$, the gain has tapered out.  
+
+Another takeaway is that the STRO algorithm clearly outperforms the traditional RI algorithm for $N \geq 2$. The results of the RI algorithm were found to be within 2.5\% of the estimated optimum from SDDP, in line with previous findings from \cite{braaten2016a}. However, the results from the STRO(7) algorithm, is within 1.4\% of the results of SDDP. Given that the estimated revenues from the rolling horizon methods, STRO and RI, are lower bounds, whereas SDDP gives an upper bound, this gap is quite close, and it is apparent that the STRO method is well suited for the hydropower planning problem. 
+
+
+
+As seen in the table, the standard deviations of the results achieved using different methods are quite high compared to the differences in the results achieved with the different algorithms. This implies that the true differences in revenues between SDDP and the other methods can be  slightly higher or lower than these experiments indicate. Since seeded scenarios were used for RI and STRO we can be more confident that the comparisons between these methods are more accurate. In future experiments, we will make efforts to reduce the standard deviations by using more level 1 scenarios to ensure more stable revenue estimates over the different trials. 
+
+
+
+
+
+\subsection{Runtime Analysis}
+Rolling Horizon methods are well suited for parallelization and multiprocessing, as each \textcolor{red}{level 1 scenario is processed independently}. To minimize the processing time, our implementation runs 40 processes in parallel, which was the maximum allowed by our hardware. With improved hardware, a further speedup is naturally achievable. There exist parallel implementations of SDDP \cite{AvPL21,PintoBorges2013,EdsonErlon2003}. However, as \cite{AvPL21} points out, parallel implementation of SDDP is far from straightforward. Therefore, we opt for a non-parallel version for benchmarking. With such parallel methods implemented, we would naturally have a substantially lower processing time with SDDP. 
+
+In table \ref{tab:runtime_rhsp}, the run times of SDDP and the STRO methods are presented. RI solves a problem of the same size as STRO(1), the computational times for these methods are, therefore, approximately the same. The total run time is given in hours (h), and the average time used to solve each level 1 scenario is given in seconds (s). Note that the run time of SDDP is given without the additional time required for sampling and discretization.  
+
+\begin{table}
+    \caption[Run times]{Run time for 1000 level 1 scenarios of STRO($N$), and 2000 iterations of SDDP.}
+    \label{tab:runtime_rhsp}
+\setlength\tabcolsep{0pt}
+\centering
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} *{1}{l} *{1}{c} *{1}{r}  }
+\toprule
+        \multirowcell{2}{Solution Method}  &  \multicolumn{2}{c}{Time} \\ 
+        \cmidrule{2-3}     
+        & Total (h) & Per sampled scenario (s) \\ 
+        \midrule
+SDDP   & 11.38 &       \\
+STRO(1) / RI & 0.26  & 0.94  \\
+STRO(2) & 0.73  & 2.63  \\
+STRO(3) & 3.47  & 12.48 \\
+STRO(4) & 5.94  & 21.38 \\
+STRO(5) & 8.19  & 29.49 \\
+STRO(6) & 10.58 & 38.10 \\
+STRO(7) & 11.88 & 42.77\\
+        \bottomrule
+    \end{tabular*}
+\end{table}   
+The table shows that the most significant increase in run-time comes with the increase from 2 to 3 level 2 scenarios per decision in STRO, followed by a nearly linear increase in computational time. Once the scenarios are sampled and given to the two-stage stochastic program, the program becomes deterministic \cite{shapiro2005complexity}. By doubling the number of scenarios for the two-stage program, the program size approximately doubles. 
+
+\textcolor{red}{We stress that 2000 iterations were significantly more than what the algorithm needed to converge. In most cases, the upper bound only shrank by 0.2\% after the initial 200 iterations and by 0.1\% after the first 500 iterations. Admittedly, it would have been reasonable to terminate the algorithm after 1000 iterations as the final 1000 iterations only yielded a $\sim 0.03\%$ improvement of the upper bound. Our reasoning behind using so many iterations was that we wanted the upper bound of SDDP to get as low as possible to make the results as comparable to the lower bound provided by the rolling horizon methods as possible. However, this makes the provided runtime for SDDP higher than what it could have been.}
+
+\textcolor{red}{It should also be noted that 125 discrete states per stage for the SDDP method is a relatively small amount, and with an increase in states there would have been an increase in processing time.}

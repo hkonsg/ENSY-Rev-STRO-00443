@@ -1,0 +1,528 @@
+\documentclass{article}
+\usepackage{geometry}
+\geometry{a4paper,includeheadfoot,left=1in,right=1in,top=0.9in, bottom=0.9in}
+\linespread{1.3}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{3pt}
+
+\usepackage{parskip}
+\usepackage[round]{natbib}
+\usepackage{graphicx, color, url, hyperref}
+\usepackage{amsmath, amsfonts, amssymb, dsfont, amsthm, booktabs,enumitem}
+\usepackage{eurosym, ragged2e}
+\usepackage[linesnumbered]{algorithm2e}
+\usepackage{nicefrac}
+
+\theoremstyle{definition}
+\newtheorem*{answer}{Answer}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{assumption}{Assumption}
+\newcounter{commentCounter}
+\setcounter{commentCounter}{1}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\definecolor{commentColor}{rgb}{.796,.406,.1992}
+\newenvironment{comment}{ \vspace{.2cm} \raggedright \color{commentColor}{\bf Reviewer's Comment \arabic{commentCounter}}: }{\addtocounter{commentCounter}{1} \vspace{0.2cm} \color{black}}
+
+\newenvironment{commentEditor}{ \vspace{.2cm} \raggedright \color{commentColor}{\bf Editor's Comment \arabic{commentCounter}}: }{\addtocounter{commentCounter}{1} \vspace{0.2cm} \color{black}}
+
+\newcommand{\Ind}{{\mathds{1}}} %indicator function
+\newcommand{\Prob}{{\mathbb{P}}} %probability
+\newcommand{\Exp}{{\mathbb{E}}} %expectation
+\newcommand{\Var}{{\mathbb{V}\text{ar}}} %indicator function
+\newcommand{\Real}{{\mathds{R}}} %real numbers
+\newcommand{\X}{{\cal X}} %feasible set
+\newcommand{\Pm}{{\cal P}} %probability measure
+\newcommand{\V}{{\cal V}} %expected value function
+\newcommand{\Ac}{{\cal A}}
+\newcommand{\Cc}{{\cal C}}
+\newcommand{\Dd}{{\cal D}}
+\newcommand{\Q}{{\cal Q}} %expected value function
+\newcommand{\Kc}{{\cal K}} %expected value function
+\newcommand{\Hc}{{\cal H}} %expected value function
+\newcommand{\F}{{\cal F}} % filtration
+\newcommand{\U}{{\cal U}} % uniform distribution
+\newcommand{\N}{{\cal N}} % successor nodes
+\newcommand{\Sc}{{\cal S}} % successor nodes
+\newcommand{\Hours}{{\cal H}} % hours
+\newcommand{\T}{{\cal T}} % time periods
+\newcommand{\Power}{{\cal S}} % number of scenarios
+\newcommand{\cvar}{{\text{CVaR}}}
+
+\definecolor{changeColor}{rgb}{0,0,0}
+\newenvironment{change}{\color{changeColor}}{\color{black}}
+
+\definecolor{sefColor}{rgb}{0,0.7,0}
+\definecolor{andreasColor}{rgb}{0.7,0,0}
+\newenvironment{sef}{ \color{sefColor}}{\color{black}}
+\newenvironment{andreas}{ \color{andreasColor}}{\color{black}}
+
+\begin{document}
+\title{Reply to Referee Reports: \\ \textsc{A policy relaxation algorithm for seasonal hydropower planning}}
+\author{Håkon S. Grini \and Anders S. Danielsen \and  Stein-Erik Fleten \and Andreas Kleiven }
+\date{}
+\maketitle
+We would like to thank the three anonymous reviewers for their constructive and insightful feedback.  
+
+We revised the manuscript  along the lines of the recommendations given and hope that they answer and resolve the issues raised. In the following, we give a detailed account of the changes and answer all comments raised. All changes made in this round are highlighted in \color{blue}blue\color{black}.
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Reviewer 1 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Discussion of Comments of Reviewer 1}
+
+\color[rgb]{.796,.406,.1992}{    
+\emph{Reviewer \#1:}\\
+    The paper presents a new algorithm to solve the mid-term hydropower scheduling problem and compare its performance with stochastic dual dynamic programming (SDDP) and a rolling horizon algorithm using a single expected value scenario. The new algorithm, called scenario-based two-stage reoptimization, solves two-stage problems in a rolling horizon setup. The scenarios are selected through sampling. Numerical results on a test case show promising results relative to SDDP both on achieved objective function value and computation time.    
+
+The paper report promising results from applying algorithmic ideas from other fields of application on the computational intensive seasonal hydropower planning problem. It will be interesting to see follow-up research showing the capabilities of the algorithm on problems not limited by the requirements of SDDP. I recommend that the paper is published with minor revisions.
+
+Some minor changes could in the reviewer's view improve the paper:}
+
+\color{black}
+\begin{answer}
+  
+    We thank the reviewer for this positive assessment.  
+\end{answer}
+
+%%%%%%% R1_1 %%%%%%% Stein-Erik
+\begin{comment}
+
+Section 7, lines 20--22: The sentence starting ``It is not necessary...'' is too strong. In order to support the use of short-term scheduling tools this is correct, but seasonal scheduling tools are also used for other applications, for instance maintenance planning, where reservoir trajectories are requested. 
+
+\end{comment}
+\begin{answer}
+    You are right. We acknowledge that seasonal scheduling tools are also used for purposes where a policy would be useful. On the other hand, future reservoir trajectories will always be estimated with error, and our approach easily allows for extracting reservoir trajectories, with distributional information. 
+
+    As a response to this comment, we changed the wording late in Section 2.1, which now reads: 
+    
+    \textcolor{blue}{``Note that this implies that the main objective of the medium-term reservoir management problem is to estimate the future value function, and, therefore, finding an implementable policy may not be necessary. As a result, the requirement that the optimization method must yield an implementable policy can be relaxed while still making the method useful for supporting short-term decision making.''} 
+
+    Further, we changed the relevant part of Section 7 (Concluding Remarks) to:
+    
+    \textcolor{blue}{``When medium-term hydropower planning is used to support the decision making for short-term planning, only the value function is passed to the short term planning problem, not necessarily an implementable policy.''}
+
+\end{answer}
+
+%%%%%%% R1_2 %%%%%%% Håkon
+\begin{comment}
+ 
+   Following up on the previous comment: it would be interesting to have more results reported from the benchmarking. Obviously, a direct comparison of reservoir trajectories is not possible, but I believe percentile plots should be possible also from the STRO algorithm. ``Opening up the black box'' might help understand the behavior of the algorithm, which is close to a necessity for real life application.
+
+\end{comment}
+\begin{answer}
+    We agree with the reviewer that percentile plots would provide an interesting benchmark to make it easier to understand how the algorithm behaves. However, to avoid publishing confidential information regarding certain characteristics of the reservoir system we have decided not to include such plots. We are sorry about that and understand that it would have been interesting to see. 
+
+\end{answer}
+
+%%%%%%% R1_3 %%%%%%%
+\begin{comment}
+
+Abstract: ``state-ofthe-art'' $->$ ``state-of-the-art''
+
+\end{comment}
+\begin{answer}
+Thank you. It has now been fixed. 
+\end{answer}
+%%%%%%% R1_4 %%%%%%%
+\begin{comment}
+
+Section 2.2 and 2.5: `m' is used both as an index (i.e.\ line 52 page 5) and in equation (4), but I find none of the meanings defined in the nomenclature.
+
+\end{comment}
+\begin{answer}
+
+In Section 2.5 `$m$' was intended to be used as the combination of the exogenous variables price $P$ and inflow $I$, but for the sake of simplicity we have now separated them from each other entirely and removed all references to $m$. 
+In Section 2.2 $m$ was used as an index, which has also been changed to $k$ instead. 
+
+\end{answer}
+
+%%%%%%% R1_5 %%%%%%%
+
+\begin{comment}
+
+First sentence of section 2.3: Recommend rewriting this sentence. In its current form it seems to implicitly state that exogenous prices it not necessary to take into account unless there is price uncertainty, which is clearly not correct when maximizing profit.
+
+\end{comment}
+
+\begin{answer}
+    You are completely right. It was intended to refer to price uncertainty. The sentence has now been changed to:
+    
+    \textcolor{blue}{``Restructured energy markets have uncertain prices, denoted $P_t$, which means that modellers have to optimize over stochastic prices.''}
+
+   %We hope you find this phrasing more accurate. 
+\end{answer}
+
+%%%%%%% R1_6 %%%%%%%
+
+\begin{comment}
+
+Table 1: $x_{1,2}$ should probably be $x_{1,3}$ as scenario 1 and 2 have the same inflow in $t=2$ according to Fig.\ 4.
+    
+\end{comment}
+
+\begin{answer}
+    Thank you for the suggestion. We agree that this would make it easier to follow the transition between $t=1$ and $t=2$ and it has therefore been changed. We also added the following to explain the change.
+    
+    \textcolor{blue}{``Similarly, in stage 1, we only use scenario indices $\{1,3\}$ since there only are 2 possible inflow realizations at $t=1$. Index 3 is used to stay consistent with the indices in stage 2.''}
+\end{answer}
+
+%%%%%%% R1_7 %%%%%%%
+\begin{comment}
+
+ Page 14 line 36/37: ``... scenarios with low inflow at $t = 1$.'' I believe ``low'' should be replaced with ``high''.
+    
+\end{comment}
+
+\begin{answer}
+    You are correct. The mistake has now been corrected. 
+\end{answer}
+
+
+%%%%%%% R1_8 %%%%%%%
+\begin{comment}
+
+Section 6: how long model horizon / what number of stages was the algorithms tested for?
+    
+\end{comment}
+
+\begin{answer}
+    Sorry for not including this in the original submission. We have now added the following sentence the second paragraph of Section 6 to clarify:
+    
+    \textcolor{blue}{``The planning horizon for each method is 2 years with weekly stages resulting in 104 stages in total.''} 
+\end{answer}
+
+%%%%%%% R1_9 %%%%%%%
+\begin{comment}
+    
+    Page 18 line 19/20: The text claims that Table 5 contains ``average price of energy produced'', but I don't find these values in the table.
+    
+\end{comment}
+
+\begin{answer}
+    Thank you for pointing this out to us. 
+    We decided to remove ``average price of energy produced'' as a metric before submitting in order to anonymize the data as much as possible and to keep the results easy to understand. These references has now been removed. 
+\end{answer}
+
+
+%%%%%%% R1_10 %%%%%%%
+\begin{comment}
+
+Section 6.1: Not implementing a parallelization scheme for SDDP in the benchmarking is understandable. With this choice it would help the reader on assessing the computation time comparison if some results from literature on achieved speed-up of SDDP through parallelization was included. 
+
+    
+\end{comment}
+
+\begin{answer}
+     You are right. To make this we have included the following under the Section ``Main innovations and benefits'' in Section 3:
+     
+     \textcolor{blue}{One example is \cite{AvPL21} which reports speedup factors of 7--10 for 10 CPUs, and 9--14 for 20 CPUs, for a case study of the Brazilian hydrothermal system. Using a more detailed representation of the Brazilian power system, \cite{MaDB21} report speedup factors of 5--6.5 for 10  CPUs and 8--11 for 20 CPUs.}
+\end{answer}
+
+
+
+
+
+\newpage
+\setcounter{commentCounter}{1}
+%%%%%%%%%%%%%%%%%%%%%
+%%% 2. Reviewer 2 %%%
+%%%%%%%%%%%%%%%%%%%%%
+\section*{Discussion of Comments of Reviewer 2}
+
+\color[rgb]{.796,.406,.1992}{    
+\emph{Reviewer \#2:}\\
+I have received the manuscript ``A policy relaxation algorithm for seasonal hydropower planning'' by Grini et al.\ for review. The authors have implemented and tested an algorithm (STRO) to calculate the marginal water values in a hydropower system based on a two-stage rolling-forecast scheme with mid-term horizon. The idea is to overcome the convexity requirements present in SDDP algorithms, which are typically applied to this optimization problem. In return, the ability to return a feasible set of nearly optimal decisions is lost. In this manuscript, only convex problems are considered nevertheless to grant comparability with SDDP.
+
+The authors present in detail the mathematical formulation of the optimization problem for a simplified hydropower system. Then their STRO algorithm is introduced, albeit without the mathematical clarity of the previous section. Its execution is discussed for a simplistic example, before a case study is presented. The performance of STRO is compared to SDDP and rolling intrinsc heuristic (RI) with regard to optimality and computation time. Results depend crucially on the number of scenarios that are generated at each stage in STRO. STRO does not quite reach the quality of SDDP, but clearly outperforms RI.
+
+In total, this manuscript presents an interesting approach to the mid-term optimization of hydropower generation and contains relevant computational results that derserve publication. However, some parts of the manuscript need revision prior to publication, where the following comments and questions need to be taken into account.
+
+\color{black} 
+\begin{answer}
+    We are grateful for this assessment. 
+\end{answer}
+
+\subsection*{Major Comments}
+
+%%%%%%% R2C1 %%%%%%%  
+\begin{comment}
+\emph{Feasibility}
+
+    As far as I understand from the problem formulation in Sec.\ 2, the existence of a feasibile solution of the optimization problem is not guaranteed for an arbitrary scenario. In particular, what would happen if there is too little inflow to satisfy a minimum flow restriction? I consider this important because the STRO algorithm explores a large number of different generated scenarios, and must yield some solution for any of these. The test case circumvents this problem because ``We were not given any specified minimum discharge for the reservoirs in question, and thus, no lower bound is set for the model''.
+
+
+\end{comment}
+\begin{answer}
+
+    We assume relatively complete recourse, that is, feasibility in every scenario. Of course, this is technically convenient, and we admit that it may not be realistic in practice, for example with the minimum flow constraint. One could check for this before starting the algorithm.  In practical tool development, one tends to use soft constraints for such cases. Then we are back to relatively complete recourse. 
+    
+\end{answer}
+
+%%%%%%% R2C2 %%%%%%%  
+\begin{comment}
+    \emph{Reservoir-head relation}
+    
+The two paragraphs in 2.6 below Eq.\ (5) are hard to follow due to several minor misformulations. For instance, $S_i$ is first a ``set of mappings'', then just a set of points; ``points'' are confused with ``weights of points''; etc. These paragraphs should be revised for clarity.
+    
+\end{comment}
+
+
+\begin{answer}
+Thank you for bringing to our attention that this is hard to follow. We have reformulated the wording to make it more clear and added the following to elaborate:
+
+\textcolor{blue}{These piece-wise linear graphs are represented as sets of points, where the x-coordinate represents the water level and the y-coordinate represents the head. These sets are denoted $M_i$, for every reservoir $i$.  To find the head $h_{i,t}$ given any feasible water level $l_{i,t}$, we introduce the variables $\lambda_{i,t,k}$ representing the weight of every point $k \in M_i$ at time $t$. By ensuring that all these weights are non-negative and sum to 1, and that at most two points adjacent to each other can be non-zero, we can find the exact point on the y-axis on the piece-wise linear graph, given the value on the x-axis.} 
+
+Note that we also have changed the naming convention of the set of points to $M_i$ to avoid confusion with the parameter $S$ that was introduced to denote the number of level 1 scenarios.
+
+\end{answer}
+
+%%%%%%% R2C3 %%%%%%%  
+\begin{comment}
+    \emph{Description of STRO}
+
+This is the most important issue. The two-stage optimization problem that is solved in each step of STRO is never defined. The manuscript only states that ``A visualization ... can be seen in Figure 2'', but in this figure I still see many stages from tau to $T$. The exact two-stage problem must be stated.
+
+\end{comment}
+
+\begin{answer}
+The two-stage problem is now formulated in Section 3.
+\end{answer}
+
+%%%%%%% R2C4 %%%%%%%  
+\begin{comment}
+\emph{Complexity}
+
+Is it possible to give an expression for the total number of LP problems in the algorithm as a function of the number of level-1 scenarios, level-2 scenarios, and time-steps?
+
+\end{comment}
+
+
+\begin{answer}
+Good idea. We have attempted to address this by adding an additional subsection in Section 3:
+\textcolor{blue}{
+\section*{``Complexity}
+Considering that the STRO heuristic is based on solving a two-stage stochastic program for every production decision, the amount of programs solved is quite large. Given $S$ level-1 scenarios and $T$ stages per level-1 scenario, one will have to solve a total of $\quad S \cdot T\quad$ LPs to get an estimate of the marginal water value. 
+}
+
+\textcolor{blue}{
+Note that the number of LPs solved is not dependent on the amount of level-2 scenarios $N$. However, this instead affects the complexity of each LP, meaning that adding more level-2 scenarios makes the individual LP harder to solve.''  
+}
+\end{answer}
+
+%%%%%%% R2C5 %%%%%%%  
+\begin{comment}
+\emph{Table 5 vs. Table 1}
+
+Why does STRO(1) give worse results than RI in the test case, in contrast to the explanation in the illustrative example?
+
+\end{comment}
+
+\begin{answer}
+    The illustrative example is intended to give an explanation as to how STRO(1) \textit{can} lead to better results than RI, not that it \textit{will} outperform it in every situation. Upon giving it another read we see that this might not be that clear, and a paragraph has been added after the illustrative example to emphasise that it cannot be generalized to every case. 
+\end{answer}
+
+%%%%%%% R2C6 %%%%%%%  
+\begin{comment}
+\emph{Runtime analysis}
+
+Do I understand correctly that runtime is compared for 40 processes STRO vs.\ 1 process SDDP? If that is the case, it seems that STRO(2) might already be slower than a properly parallelized SDDP? I find that surprising for a heuristic algorithm. Also, how many iterations did SDDP actually need to converge?
+
+
+\end{comment}
+
+\begin{answer}
+    Except for some straightforward parallelization, we pretty much brute-forced the implementation. There are likely many things one can do to speed this up. However, we chose not to do that, mostly because it is out of scope for the paper---the main point is to get the idea about the policy relaxation algorithm forward.
+
+    We agree that the point of heuristic algorithms is usually to sacrifice some accuracy in the interest of computational tractability, and we understand that the runtimes of the rolling horizon methods seem unreasonably high compared to the SDDP method. However, considering that the heuristic is based on solving a large amount of two-stage stochastic programs with increasing complexity with the number of level 2 scenarios, we are not surprised that the processing time is on the high end in these initial experiments. As mentioned, there are likely several efforts that can be made to speed the method up. It must also be noted that, unlike rolling horizon methods, SDDP does not benefit as much from parallelization and the benefit from extra parallel processes tends to diminish. It is therefore unlikely that running SDDP on 40 cores would lead to a 40-fold speedup. We have elaborated on what sorts of speedups have been achieved with parallelization of SDDP under the ``Main innovations and benefits'' subsection of Section 3.
+
+    Regarding how many iterations SDDP needed to converge we have added the following paragraph in Section 6.1 to shed some light on this:
+
+    \textcolor{blue}{``We stress that 2000 iterations were significantly more than what the algorithm needed to converge. In most cases, the upper bound only shrank by 0.2\% after the initial 200 iterations and by 0.1\% after the first 500 iterations. Admittedly, it would have been reasonable to terminate the algorithm after 1000 iterations as the final 1000 iterations only yielded a $\sim 0.03\%$ improvement of the upper bound. Our reasoning behind using so many iterations was that we wanted the upper bound of SDDP to get as low as possible to make the results as comparable to the lower bound provided by the rolling horizon methods as possible. However, this makes the provided runtime for SDDP higher than what it could have been.''}
+
+    In retrospect 2000 iterations was an exaggeration, but since our intention with this work was to provide insight into how rolling horizon methods could provide values close to the optimal strategy, we rather allowed the SDDP method to run for too many iterations to get the upper bound as close to the optimum as possible. 
+
+    We agree that this makes the SDDP method seem disproportionately slow, which is unfortunate, but we also note that this excludes the discretization step and also that the relatively small amount of possible states makes the problem relatively easy for the SDDP method to solve. 
+    
+\end{answer}
+
+
+\subsection*{Minor Comments}
+
+\begin{comment}
+\begin{enumerate}
+\item End of page 4: ``without negatively impacting the utility'' --- That sounds as if information about the optimal strategy have no utility whatsoever. I suggest to loosen this statement.
+\item below Eq.\ (2) ``energy balance'' should perhaps be ``water balance''?
+\item I suggest to add markers for the points $S_i$ in Fig.\ (1), and indicate at least the position of zero on the axes.
+
+\item  In the illustrative example, Sec.\ 4, it would be helpful to stick with the terminology ``level--2 scenarios'' instead of ``combination of samples'' etc.
+
+\item page 14 ``...will always sample at least one of the 2 scenarios with low inflow at $t=1$'' --- I guess it should be ``high inflow''?
+\item Table 4: replace ``production capacity'' by ``max.\ discharge'', as several reservoirs have no production.
+\item Eq.(12): Isn't the level at $t=i+1$ still unknown at time $t$?
+
+\end{enumerate}
+\end{comment}
+
+\begin{answer}
+\quad
+\begin{enumerate}
+\item We agree. It came off too strong and has now been changed to:
+
+\textcolor{blue}{Note that this implies that the main objective of the medium-term reservoir management problem is to estimate the future value function, and, therefore, finding an implementable policy may not be necessary. As a result, the requirement that the optimization method must yield an implementable policy can be relaxed while still making the method useful for supporting short-term decision-making.} 
+\item It has now been updated. 
+\item The figures have been updated with markers. We hope the revision also made it clearer where the zero point is.
+
+\item Agreed. We have now changed the terminology and we hope it made it more clear.
+
+\item You are right, that was an error which has now been fixed. 
+\item Good point. We have now changed it.
+\item The level at $t=i+1$ is set according to equation (2). Here it can be seen that this is set entirely based on the water level, inflow, discharge and spill at $t=i$. Since we assume that the inflow is known for the stage we are making production decisions the water level in the next stage is not based on unknown information. 
+
+\end{enumerate}
+\end{answer}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%
+%%% 3. Reviewer 3 %%%
+%%%%%%%%%%%%%%%%%%%%%
+\section*{Discussion of Comments of Reviewer 3}
+\setcounter{commentCounter}{1}
+
+%%%%%%% R3C0 %%%%%%% 
+
+\color[rgb]{.796,.406,.1992}{    
+\emph{Reviewer \#3:}\\
+The paper proposes a smart method for the medium-term hydropower generation scheduling. The results presented in the paper indicate that the proposed method might outperform the well-established SDDP method in terms of computational burden with an acceptable solution quality. I encourage the authors to explore the potential of the proposed method to handle non-convex formulations by comparing the STRO method with such non-convex formulations against the SDDP method with the necessary convex approximations. In order to perform such comparisons I suggest the authors to use an optimization-simulation framework similar to the one used in the paper they'll find on the link below:
+
+https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-rpg.2017.0407
+
+Despite the foregoing, the authors need to make some major changes in the paper before it can be accepted for publication in Energy Systems. Please find below my comments.
+
+\color{black}
+\begin{answer}
+We thank the reviewer for the positive feedback and appreciate the good ideas for future research into testing non-convex formulations and comparing them against the SDDP method. The framework seems like a good resource. We have attempted to address the feedback and suggested revisions and hope the reviewer finds it satisfactory. 
+\end{answer}
+
+\subsection*{Major comments:}
+%%%%%%% R3C1 %%%%%%% 
+\begin{comment}
+
+The implementation of the STRO method in Section 3 must be clarified. The implementation of the SDDP method is well known in the literature and does not need clarification. I include next some questions (but not the only ones) that need clarification. Are $N$ level 2 scenarios generated from each system's state ($l_t$, $P_t$, $I_t$)? Do level 2 scenarios comprise possible realizations of Pt and It only in later stages (from $t+1$ to $T$) or also in the ``current'' stage $t$?  Please include the objective function of the two-stage stochastic program that is solved at each system's state. Are first-stage decisions forced to be the same across all scenarios? Is this related to the policy relaxation? How are level 1 and 2 scenarios handled in the transition from a given system's state at stage $t$ to another state in stage $t+1$ as a function of the results of the two-stage program(s)? Are the level 2 scenarios generated by using the models described in section 2.3 or they are sampled from level 1
+scenarios previously generated by such models?  The statements about the similarity and difference with respect to the RI algorithm do not suffice for the reader to fully understand the STRO method. Almost all statements in page 11 need further elaboration. The use in page 12 of ``per decision'' to refer to the level 2 scenarios and to the number of samples is confusing. I guess using ``per state'' would be clearer. As a rolling horizon method, how is the STRO method implemented in the last stages of the horizon for a fair comparison with the SDDP algorithm? Does the STRO method look beyond the horizon? Some of these questions become a bit clearer in section 4. Notwithstanding, they should be clarified in section 3.
+
+\end{comment}
+\begin{answer}
+Thank you for the thorough questions. As other reviewers have mentioned the implementation was not as clear as it should have been and we have attempted to clarify your questions by providing a complete mathematical description of the model in Section 3. In addition, hope to provide satisfactory answers to your questions in the following:
+\quad
+\begin{enumerate}
+\item \textcolor{commentColor}{Are N level 2 scenarios generated from each system's state ($l_t$, $P_t$, $I_t$)?} Yes, $N$ level 2 scenarios are generated from each state in the current implementation.  
+
+\item \textcolor{commentColor}{Do level 2 scenarios comprise possible realizations of $P_t$ and $I_t$ only in later stages (from $t+1$ to $T$) or also in the ``current'' stage $t$?} We assume that the exogenous variables are known at the ``current'' stage $t$ and that every level 2 scenario, therefore, starts with this state and that the remainder of the horizon is sampled.
+
+\item \textcolor{commentColor}{Please include the objective function of the two-stage stochastic program that is solved at each system's state.} This has been included in the mathematical formulation of the two-stage stochastic LP in Section 3.
+
+\item \textcolor{commentColor}{Are first-stage decisions forced to be the same across all scenarios?} If this question refers to level 2 scenarios then yes, all first-stage decisions are forced to be the same across all $N$ scenarios. 
+
+\item \textcolor{commentColor}{Is this related to the policy relaxation?} This is not directly related to the concept of policy relaxation which revolves around not getting a deterministic policy given the exact same state. Since STRO relies on random sampling of $N$ level 2 scenarios the heuristic will produce different decisions depending on which scenarios were sampled even if the first-stage decisions are forced to be the same within the LP that is solved by this heuristic. We hope the mathematical formulation along with the explanations in Section 3 clarifies this. 
+
+\item \textcolor{commentColor}{How are level 1 and 2 scenarios handled in the transition from a given system's state at stage $t$ to another state in stage $t+1$ as a function of the results of the two-stage program(s)?}
+This is elaborated on in Section 3 with the following explanation:
+\textcolor{blue}{``Each time this problem is being solved, the time $t$ decisions, i.e. first-stage decisions, $(x_{i,t}^s, r_{i,t}^s)$ are used to update $l_{i,t}^s$ along the level 1 scenario $s$ according to equation (2). This updated state then serves as an initial condition for the next two-stage problem.''}
+
+\item \textcolor{commentColor}{Are the level 2 scenarios generated by using the models described in Section 2.3 or they are sampled from level 1
+scenarios previously generated by such models?} The level 2 scenarios are in our implementation generated using the models in Section 2.3. However, future implementations might choose to use previosly sampled level 1 scenarios in the interest of speeding up the method. 
+
+\item \textcolor{commentColor}{The statements about the similarity and difference with respect to the RI algorithm do not suffice for the reader to fully understand the STRO method.} We hope that the mathematical model provided clarifies the differences between RI and STRO. 
+
+
+\item \textcolor{commentColor}{Almost all statements in page 11 need further elaboration.} We are not entirely sure exactly which statements the reviewer refers to here, but we have tried to elaborate on some of the statements and also hope the mathematical model and its description clarifies more of these statements.  
+
+
+\item \textcolor{commentColor}{The use in page 12 of ``per decision'' to refer to the level 2 scenarios and to the number of samples is confusing. I guess using ``per state'' would be clearer.} Agreed. We have changed the wording to ``per state'' in the updated article. 
+
+\item \textcolor{commentColor}{As a rolling horizon method, how is the STRO method implemented in the last stages of the horizon for a fair comparison with the SDDP algorithm? Does the STRO method look beyond the horizon?} STRO does not look beyond the horizon in this implementation. This becomes explicit with the mathematical formulation, and we understand that it was not clear before it was included. 
+
+\item \textcolor{commentColor}{Some of these questions become a bit clearer in section 4. Notwithstanding, they should be clarified in section 3.} We hope our changes in section 3 provide satisfactory clarifications. 
+
+\end{enumerate}
+\end{answer}
+
+
+%%%%%%% R3C2 %%%%%%% 
+\begin{comment}
+
+Some relevant details are missing in section 6, in addition to some questions about the implementation of the rolling horizon methods formulated above, such as the planning horizon considered by each method (1 year?), clarify if 125 discrete states are considered for each exogenous variable and stage or as a whole for the two exogenous variables in the SDDP implementation and if further scenario reductions have been performed, and provide details about the convergence of the SPPD algorithm. 
+
+\end{comment}
+\begin{answer}
+Thank you for pointing this out, you are of course right. The planning horizon is explained in the second paragraph in section 6: 
+
+\textcolor{blue}{``The planning horizon for each method is 2 years with weekly stages resulting in 104 stages in total.''} 
+
+As for the question regarding 125 discrete states, we have added the following sentence to address this: 
+
+\textcolor{blue}{``Each of these stages contains a combination of price and inflow. No further scenario reductions were applied for the SDDP method.''} 
+
+Finally, to provide more detail on the convergence of SDDP we added the following paragraphs to section 6.1:
+
+\textcolor{blue}{``We stress that 2000 iterations were significantly more than what the algorithm needed to converge. In most cases, the upper bound only shrank by 0.2\% after the initial 200 iterations and by 0.1\% after the first 500 iterations. Admittedly, it would have been reasonable to terminate the algorithm after 1000 iterations as the final 1000 iterations only yielded a $\sim 0.03\%$ improvement of the upper bound. Our reasoning behind using so many iterations was that we wanted the upper bound of SDDP to get as low as possible to make the results as comparable to the lower bound provided by the rolling horizon methods as possible. However, this makes the provided runtime for SDDP higher than what it could have been.}
+
+\textcolor{blue}{It should also be noted that 125 discrete states per stage for the SDDP method is a relatively small amount, and with an increase in states there would have been an increase in processing time.''}
+
+As these paragraphs explain we use a larger amount of iterations than necessary to get as close to the optimal value as possible to make the estimated revenues from the methods as comparable as possible, although we do note that it might have been too many iterations in the end. 
+
+\end{answer}
+
+\begin{comment}
+
+Which solution method is used to solve the two-stage linear programs when applying the rolling horizon algorithms?
+
+\end{comment}
+\begin{answer}
+    We brute-force this by solving the deterministic equivalent \citep{wets1974stochastic}. Real-life implementations should put emphasis on speed-up on solving each subproblem. 
+\end{answer}
+
+\begin{comment}
+
+    Please clarify the differences and contributions with respect to the papers you'll find on the links below.
+
+https://link.springer.com/article/10.1007/s12667-010-0020-7
+
+https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-gtd.2017.0903
+
+\end{comment}
+
+\begin{answer}
+    Andreas: (\textcolor{red}{HÅKON we should probably add something like this to the manuscript.}) Multi-stage stochastic programming is also highly relevant in power system analyses \citep{wallace2003stochastic,roald2023power}. Our method is similar to the approach in \cite{helseth2010long,helseth2018detailed}, where two-stage problems are sequentially reoptimized along historical values of uncertain variables. We extend this method in several ways. First, we suggest to estimate the value function by relaxing the requirement of an implementable policy. By doing so, we can sample a small subset of scenarios from which the two-stage problem is based on, and as such, control the degree of computational complexity. This makes our method capable of solving non-convex problems as well, as opposed to Helseth et.\ al.\ (op.\ cit.), which is limited to the linear problems. Second, contrary to Helseth et.\ al.\ (op.\ cit.), we evaluate the performance against the state-of-the-art algorithm SDDP, which is known to be optimal under certain restrictions. This gives us an upper bound on the profit maximization problem, which allows us to analyse different configurations of our suggested approach and provide useful insights about representation of uncertainty in hydropower scheduling.
+\end{answer}
+
+%%%%%%% R3MINOR %%%%%%% 
+\subsection*{Minor points:}
+\begin{comment}
+\begin{itemize}
+\setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[--] There is a typo in ection 2.4: ``…and reservoirs whose spilt (split) water flows into $i$, respectively''.  {\change We realize that spilt and spilled are different ways of writing the same word in UK and US English. We have now changed the wording to `spilled' and added change the sentence slightly to make it clearer: \textcolor{blue}{``that respectively represent the reservoirs whose discharged and spilled water flows directly into reservoir $i$''}.}
+\item[--] Please clarify the meaning of set $N$ and of $m_0$ in (4) in section 2.5. In section 2.4 the system's state is defined as ($l_t$, $P_t$, $I_t$), but in (4) the initial state is defined as ($l_0, m_0$). In section 3 the system's state is defined as $(l_t, m_t)$. It is also in section 3 that $N$ is referred as the set of scenarios that are generated from time $t$ and state $(l_t, m_t)$ to the end of the horizon. Please clarify. {\change Not done.}
+\item[--] In the nomenclature, please replace $m$ with $k$ to define variable lambda.
+ {\change Done}
+\end{itemize}
+\end{comment}
+\begin{answer}
+Håkon:
+\end{answer}
+
+
+\newpage
+\bibliography{references}
+\bibliographystyle{plainnat}
+
+\end{document}

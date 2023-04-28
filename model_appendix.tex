@@ -1,0 +1,70 @@
+\newpage
+\section{Piece-wise Linear Approximations}
+\label{appendix: Piece-wise linear}
+As the head $h_{i,t}$ is a function of the amount of water in a reservoir $l_{i,t}$ this function needs to be approximated in a piece-wise manner. To do this, the relation between head and water level for a specific reservoir $i$ can be represented by a set $M_i$ which contains sample points ($(l_{i,1}, h_{i,1}),...,(l_{i,K}, h_{i,K})$), representing the mapping between water level and head. Increasing the number of points naturally leads to a better approximation, but comes at the consequence of increased complexity. 
+
+To find the head from the water level using the piece-wise linear graph, a set of variables representing the weight of point $k$ for reservoir $i$ at time $t$ denoted $\lambda_{i,t,k}$. By ensuring that no weights can be negative \eqref{eq:sum_lambda_zero}, the weights sum to 1 \eqref{eq:sum_lambda_one}, and that only two adjacent points are non-zero using a special ordered set of type 2 constraint (SOS2) \eqref{eq:sum_lambda_SOS2}, one can find the head $h_{i,t}$ based on the water level $l_{i,t}$. This is done using equations \eqref{eq:sum_lambda_reservoir}--\eqref{eq:sum_lambda_head}. Equation \eqref{eq:sum_lambda_reservoir} forces the weights to correspond with the water level, and equation \eqref{eq:sum_lambda_head} finds the head given the weights. If the function describing the mapping from water level to head is concave, the SOS2 constraint \eqref{eq:sum_lambda_SOS2} is redundant. 
+
+\begin{equation}
+\label{eq:sum_lambda_zero}
+     \lambda_{i,t,k}  \geq 0, \quad  k \in M_{i}  \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:sum_lambda_one}
+    \sum_{k \in M_{i}}  \lambda_{i,t,k} = 1, \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:sum_lambda_SOS2}
+     \lambda_{i,t,k} \in \text{SOS2}, \quad  k \in M_{i} \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:sum_lambda_reservoir}
+    \sum_{k \in M_{i}}  \lambda_{i,t,k} l_{i,k} = l^{avg}_{i,t}, \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:sum_lambda_head}
+    \sum_{k \in M_{i}}  \lambda_{i,t,k} h_{i,k} = h_{i,t}, \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+As the incoming and outgoing water levels can be quite different, the average water level $l^{avg}_{i,t}$ is used as the basis for the head for the period. This variable is given according to constraint \eqref{eq:head_average}.
+
+\begin{equation}
+\label{eq:head_average}
+  l^{avg}_{i,t} = \dfrac{l_{i,t}+l_{i,t+1}}{2},   \quad  i\in R^P \quad t=0,..,T-1
+\end{equation}
+
+
+
+
+\section{McCormick Envelope Constraints}
+\label{Appendix: McCormick constraints}
+In the following the constraints comprising the McCormick envelopes are shown. These are used to ensure that the substitution variable $w_{i,t}$ closely approximates the bi-linear term $h_{i,t}x_{i,t}$. These constraints depend on the variables $h_{i,t}$ and $x_{i,t}$, as well as the maximum and minimum values that these can take on. These maximum and minimum values are denoted $H_{i,t}^{max}$,$H_{i,t}^{min}$, $X_{i,t}^{max}$ and $X_{i,t}^{min}$. 
+
+\begin{equation}
+\label{eq:McCormick_Underest_1}
+    w_{i,t} \geq X_{i,t}^{min}h_{i,t} + x_{i,t}H_{i,t}^{min} - X_{i,t}^{min}H_{i,t}^{min}, \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:McCormick_Underest_2}
+    w_{i,t} \geq X_{i,t}^{max}h_{i,t} + x_{i,t}H_{i,t}^{max} - X_{i,t}^{max}H_{i,t}^{max}, \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:McCormick_Overest_1}
+    w_{i,t} \leq X_{i,t}^{max}h_{i,t} + x_{i,t}H_{i,t}^{min} - X_{i,t}^{max}H_{i,t}^{min},  \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:McCormick_Overest_2}
+    w_{i,t} \leq X_{i,t}^{min}h_{i,t} + x_{i,t}H_{i,t}^{max}  - X_{i,t}^{min}H_{i,t}^{max}, \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
+
+\begin{equation}
+\label{eq:McCormick_bounds}
+    0 \leq w_{i,t} \leq  X_{i,t}^{max}H_{i,t}^{max}, \quad  i\in R^{P} \quad t=0,..,T-1
+\end{equation}
